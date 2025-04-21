@@ -1,7 +1,25 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\PostController;
+// Public Route
+Route::get('/', function () {
+    return view('welcome');
+})->name('home');
 
-Route::resource('posts', PostController::class);
+// Dashboard Route with Middleware
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// Authenticated Routes Group
+Route::middleware(['auth'])->group(function () {
+    // Profile Routes
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// Authentication Routes
+require __DIR__.'/auth.php';
